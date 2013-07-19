@@ -62,7 +62,7 @@ sub BUILD {
     if (!$spec_loaded) {
         my $dist_dir;
         try {
-            $dist_dir = dir(dist_dir('MessageQ'));
+            $dist_dir = dir(dist_dir('Net-RabbitMQ-PP'));
         } catch {
             $dist_dir = file(__FILE__)->absolute->resolve->dir->parent->parent->parent->parent->subdir('share');
         };
