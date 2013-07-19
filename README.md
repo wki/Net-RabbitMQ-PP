@@ -1,4 +1,4 @@
-Net-RabbitMQ-PP
-===============
+Net::RabbitMQ::PP
+=================
 
-a pure perl feature-complete AMQP implementation
+![Class Diagram](Net__RabbitMQ__PP.png)
