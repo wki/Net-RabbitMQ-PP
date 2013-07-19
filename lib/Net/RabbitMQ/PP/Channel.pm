@@ -46,6 +46,34 @@ sub message_definition {
             },
             response => 'Basic::CancelOk',
         },
+        return => {
+            message => 'Basic::Return',
+            fields => {
+                reply_code  => '',
+                reply_text  => '',
+                exchange    => '',
+                routing_key => '',
+            },
+            response => 'Basic::ReturnOk'
+        },
+        # deliver => {
+        #     message => 'Basic::Deliver',
+        #     fields => {
+        #         consumer_tag => '',
+        #         delivery_tag => '',
+        #         redelivered  => '',
+        #         exchange     => '',
+        #         routing_key  => '',
+        #     },
+        #     # no response => 'Basic::DeliverOk'
+        # },
+        # recover => {
+        #     message => 'Basic::Recover',
+        #     fields => {
+        #         requeue => 0,
+        #     },
+        #     response => 'Basic::RecoverOk'
+        # },
     };
 }
 
@@ -211,13 +239,6 @@ sub close {
     
     $self->broker->_mark_channel_closed($self->channel_nr);
 }
-
-
-### ASYNC Model?
-# - return(reply-code, reply-text, exchange, routing-key) -- returns an undeliverable message
-# - deliver(consumer-tag, delivery-tag, redelivered, exchange, routing-key) -- 
-# - reject(delivery-tag, requeue)
-# - recover(requeue)
 
 __PACKAGE__->meta->make_immutable;
 1;

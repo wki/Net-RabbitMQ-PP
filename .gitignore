@@ -14,3 +14,5 @@ META.yml
 MYMETA.yml
 nytprof.out
 pm_to_blib
+Net-RabbitMQ-PP-*.tar.gz
+Net-RabbitMQ-PP-*/

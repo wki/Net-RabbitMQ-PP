@@ -47,5 +47,35 @@ sub ack {
     );
 }
 
+=head2 reject
+
+Reject a received message
+
+=cut
+
+sub reject {
+    my $self = shift;
+    my %args = @_;
+    
+    $self->write_frame(
+        $self->channel_nr,
+        'Basic::Reject',
+        delivery_tag => $self->delivery_tag,
+        requeue      => 0,
+        %args
+    );
+}
+
+=head2 return (reply_code => ..., reply_rext => ..., exchange => ..., routing_key => ...)
+
+returns a message
+
+=cut
+
+sub return {
+    # FIXME: implement me
+}
+
+
 __PACKAGE__->meta->make_immutable;
 1;
