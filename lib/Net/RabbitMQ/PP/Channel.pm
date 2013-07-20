@@ -107,11 +107,8 @@ sub publish {
         header    => $header // {},
     );
     
-    # We split the body into frames of 30000 characters.
-    # TODO: this size should really be based on the max_frame_size set
-    #  in the Tune/TuneOk frames during connection
-    my @chunks = unpack '(a30000)*', $data;
-    
+    # We split the body into frames of frame_max octets
+    my @chunks = unpack "(a${\$self->broker->frame_max})*", $data;
     $self->write_body($self->channel_nr, $_) for @chunks;
 }
 

@@ -9,16 +9,12 @@ use Try::Tiny;
 use Data::Dumper;
 use namespace::autoclean;
 
+with 'Net::RabbitMQ::PP::Role::Debug';
+
 has network => (
     is       => 'ro',
     isa      => 'Object', # typically ::Network
     required => 1,
-);
-
-has debug => (
-    is      => 'ro',
-    isa     => 'Int',
-    default => 0,
 );
 
 has _pre_read_data => (
@@ -74,13 +70,6 @@ sub BUILD {
 
         $spec_loaded++;
     }
-}
-
-sub print_debug {
-    my $self = shift;
-    my $level = shift;
-
-    say @_ if $self->debug >= $level;
 }
 
 =head2 write ( $channel, $frame_type [, %args ] )

@@ -9,7 +9,8 @@ use Try::Tiny;
 use Carp;
 use namespace::autoclean;
 
-with 'Net::RabbitMQ::PP::Role::FrameIO';
+with 'Net::RabbitMQ::PP::Role::FrameIO',
+     'Net::RabbitMQ::PP::Role::Debug';
 
 # cat share/amqp0-9-1.xml  | egrep '<(class|method|field)' | less
 
@@ -116,12 +117,6 @@ has password => (
     default => 'guest',
 );
 
-has debug => (
-    is      => 'ro',
-    isa     => 'Int',
-    default => 0,
-);
-
 has is_connected => (
     is      => 'rw',
     isa     => 'Bool',
@@ -166,6 +161,12 @@ has _opened_channels => (
     }
 );
 
+has frame_max => (
+    is        => 'rw',
+    isa       => 'Int',
+    predicate => 'has_frame_max',
+);
+
 =head2 connect
 
 connect with the RabbitMQ server
@@ -194,6 +195,18 @@ sub connect {
     );
 
     my $tune_info = $self->read_frame(0, 'Connection::Tune');
+    
+    $self->print_debug(1, 'Tune: channel_max = ', $tune_info->method_frame->channel_max);
+    $self->print_debug(1, 'Tune: frame_max   = ', $tune_info->method_frame->frame_max);
+    $self->print_debug(1, 'Tune: heartbeat   = ', $tune_info->method_frame->heartbeat);
+    
+    if ($self->has_frame_max) {
+        $self->frame_max($tune_info->method_frame->frame_max)
+            if $self->frame_max > $tune_info->method_frame->frame_max;
+    } else {
+        $self->frame_max($tune_info->method_frame->frame_max);
+    }
+    
     $self->write_frame(
         0, 'Connection::TuneOk',
         channel_max => $tune_info->method_frame->channel_max,
