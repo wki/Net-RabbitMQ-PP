@@ -13,12 +13,10 @@ services:
 before_install:
     - sudo apt-get update -qq
     - sudo apt-get install -qq libxml2 libxml2-dev
-    # Prevent "Please tell me who you are" errors for certain DZIL configs
     - git config --global user.name "TravisCI"
     - git config --global user.email $HOSTNAME":not-for-mail@travis-ci.org"
 
 install:
-    # Deal with all of the DZIL dependancies, quickly and quietly
     - cpanm --quiet --notest --skip-satisfied Dist::Zilla
     - dzil authordeps | grep -vP '[^\w:]' | xargs -n 5 -P 10 cpanm --quiet --notest --skip-satisfied
     - export AUTOMATED_TESTING=1 HARNESS_OPTIONS=j10:c HARNESS_TIMER=1
