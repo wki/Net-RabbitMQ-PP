@@ -167,6 +167,8 @@ has frame_max => (
     predicate => 'has_frame_max',
 );
 
+# sub DEMOLISH {}
+
 =head2 connect
 
 connect with the RabbitMQ server

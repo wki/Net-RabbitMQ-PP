@@ -210,11 +210,11 @@ sub _read_frames_into_cache {
     my $self    = shift;
     my $channel = shift;
 
-    ### Could this be harmful?
     return if $self->has_cached_frames($channel);
-
+    
     my $data = $self->_read_data
         or return;
+
     my @frames = Net::AMQP->parse_raw_frames(\$data);
     
     foreach my $frame (@frames) {
@@ -281,9 +281,8 @@ sub _read_data {
     }
 
     # Read header
-    my $header = substr $data, 0, 7, '';
-
-    return unless $header;
+    my $header = substr $data, 0, 7, ''
+        or return;
 
     my ($type_id, $channel, $size) = unpack 'CnN', $header;
 

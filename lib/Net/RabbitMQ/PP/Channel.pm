@@ -153,11 +153,14 @@ sub _read_response {
         $body .= $frame->payload;
     }
     
+    # use Data::Dumper; warn Dumper $deliver_frame;
+    
     return Net::RabbitMQ::PP::Message->new(
         channel_nr     => $self->channel_nr,
         frame_io       => $self->frame_io,
         body           => $body,
         delivery_tag   => $deliver_frame->method_frame->delivery_tag,
+        routing_key    => $deliver_frame->method_frame->routing_key,
         reply_to       => $header->header_frame->headers->{reply_to},
         correlation_id => $header->header_frame->headers->{correlation_id},
     );

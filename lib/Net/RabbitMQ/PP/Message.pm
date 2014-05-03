@@ -16,6 +16,12 @@ has delivery_tag => (
     required => 1,
 );
 
+has routing_key => (
+    is       => 'ro',
+    isa      => 'Str',
+    required => 1,
+);
+
 has reply_to => (
     is       => 'ro',
     isa      => 'Maybe[Str]',

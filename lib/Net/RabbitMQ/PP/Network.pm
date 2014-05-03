@@ -3,6 +3,7 @@ use Moose;
 use IO::Socket::INET;
 use Socket qw(IPPROTO_TCP TCP_NODELAY);
 use namespace::autoclean;
+use Try::Tiny;
 
 has host => (
     is      => 'ro',
@@ -37,7 +38,7 @@ sub _build_socket {
             PeerAddr => $self->host,
             PeerPort => $self->port,
             Proto    => 'tcp',
-            Timeout  => 1,              # FIXME: right?
+            # Timeout  => 1,              # FIXME: right?
         );
 
         if (!defined $socket) {
@@ -63,7 +64,7 @@ sub _build_socket {
 sub DEMOLISH {
     my $self = shift;
 
-    $self->socket->close();
+    try { $self->socket->close() };
 }
 
 sub write {
@@ -83,9 +84,14 @@ sub read {
 
     while (!defined $chunk_size) {
         $chunk_size = $self->socket->sysread($chunk, $read_size);
-
-        if (! defined $chunk_size) {
+        
+        # a zero length result indicates end-of-file,
+        # undef means "nothing there"
+        if (defined $chunk_size && !$chunk_size) {
+            $self->socket->close;
+        } elsif (!defined $chunk_size) {
             my $read_error = $!;
+            warn "READ ERROR: $read_error";
             if ($read_error eq 'Interrupted system call') {
                 # A signal interrupted us... just try again
                 next;
